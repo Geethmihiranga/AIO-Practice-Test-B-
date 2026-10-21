@@ -1,4 +1,4 @@
-const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api')
+const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || '/api')
   .replace(/\/+$/, '')
 
 async function request(path, options = {}) {
@@ -38,26 +38,31 @@ function normalizeClients(response) {
 }
 
 export async function fetchClients(phone = '') {
-  const query = phone ? `?phone=${encodeURIComponent(phone)}` : ''
-  return normalizeClients(await request(`/clients${query}`))
+  if (phone) {
+    const response = await request(`/v1/clients/search?phone=${encodeURIComponent(phone)}`)
+    // search returns a single client wrapped in { data: {...} }
+    const client = response?.data ?? response
+    return Array.isArray(client) ? client : [client]
+  }
+  return normalizeClients(await request('/v1/clients'))
 }
 
 export function createClient(client) {
-  return request('/clients', {
+  return request('/v1/clients', {
     method: 'POST',
     body: JSON.stringify(client),
   })
 }
 
 export function updateClient(id, changes) {
-  return request(`/clients/${encodeURIComponent(id)}`, {
+  return request(`/v1/clients/${encodeURIComponent(id)}`, {
     method: 'PUT',
     body: JSON.stringify(changes),
   })
 }
 
 export function deleteClient(id) {
-  return request(`/clients/${encodeURIComponent(id)}`, {
+  return request(`/v1/clients/${encodeURIComponent(id)}`, {
     method: 'DELETE',
   })
 }

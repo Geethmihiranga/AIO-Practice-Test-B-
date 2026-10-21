@@ -10,6 +10,19 @@ Copy-Item .env.example .env
 npm run dev
 ```
 
+Start the Laravel API in a second terminal from
+`F:\AIO\New folder\AIO-ITCOURSE0B5Intake01LaravelPracticles`:
+
+```sh
+Copy-Item .env.example .env
+composer install
+php artisan key:generate
+php artisan migrate
+php artisan serve --host=127.0.0.1 --port=8001
+```
+
+Create the `client_management` MySQL database and set its credentials in the Laravel `.env` before running migrations. The Vite development server proxies `/api` to `http://127.0.0.1:8001` by default; change `VITE_BACKEND_URL` to use another Laravel server.
+
 ## Project structure
 
 ```text
@@ -44,4 +57,4 @@ The frontend expects these JSON endpoints relative to `VITE_API_BASE_URL`:
 | `PUT` | `/clients/{id}` | Update phone, address, and project budget |
 | `DELETE` | `/clients/{id}` | Delete a client |
 
-List responses may be an array or a Laravel resource response with a `data` array. Client fields use snake_case: `project_budget`, `service_charge`, `discount_value`, and `final_project_value`. The API remains responsible for calculating service charges, discounts, and final project values. Configure Laravel CORS to allow the frontend origin during local development.
+List responses use a Laravel resource response with a `data` array. Client fields use snake_case: `project_budget`, `employee_count`, `service_charge`, `discount_value`, and `final_project_value`. The API calculates the service charge, employee-count discount, and final project value. A company with exactly 100 employees receives no discount. For production, configure `VITE_API_BASE_URL` and Laravel CORS for your deployment origins.

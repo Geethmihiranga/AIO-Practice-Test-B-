@@ -29,6 +29,7 @@ const emptyForm = () => ({
   phone: '',
   company: '',
   address: '',
+  employee_count: '',
   project_budget: '',
 })
 
@@ -82,6 +83,7 @@ function openEditForm(client) {
     phone: client.phone || '',
     company: client.company || '',
     address: client.address || '',
+    employee_count: client.company_employee_count ?? 100,
     project_budget: client.project_budget ?? '',
   })
   error.value = ''
@@ -104,6 +106,7 @@ async function saveClient() {
     phone: form.phone.trim(),
     company: form.company.trim(),
     address: form.address.trim(),
+    company_employee_count: Number(form.employee_count),
     project_budget: Number(form.project_budget),
   }
 
@@ -112,6 +115,7 @@ async function saveClient() {
       await updateClient(editingClient.value.id, {
         phone: payload.phone,
         address: payload.address,
+        company_employee_count: payload.company_employee_count,
         project_budget: payload.project_budget,
       })
       notice.value = 'Client details updated.'
@@ -500,7 +504,7 @@ onMounted(() => loadClients())
               {{ editingClient ? 'Edit client' : 'Add a client' }}
             </h2>
             <p class="modal-subtitle">
-              {{ editingClient ? 'Update the phone, address, or project budget.' : 'Enter the client and project details below.' }}
+              {{ editingClient ? 'Update the phone, address, employee count, or project budget.' : 'Enter the client and project details below.' }}
             </p>
           </div>
           <button
@@ -566,6 +570,16 @@ onMounted(() => loadClients())
               required
               rows="2"
             />
+          </label>
+          <label class="field field-full">
+            <span>Number of employees <b>*</b></span>
+            <input
+              v-model="form.employee_count"
+              min="0"
+              required
+              step="1"
+              type="number"
+            >
           </label>
           <label class="field field-full">
             <span>Project budget <b>*</b></span>
